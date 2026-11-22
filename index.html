@@ -14,21 +14,580 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon.png">
-<style>html,body{margin:0;height:100%;background:#fff}iframe{position:fixed;inset:0;width:100%;height:100%;border:0}.ld{position:fixed;inset:0;z-index:2;display:grid;place-items:center;background:#fff;font-family:system-ui,sans-serif;color:#5b6472;font-size:15px;transition:opacity .25s}.ld img{width:56px;display:block;margin:0 auto 14px}.ld.hide{opacity:0;pointer-events:none}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@600;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: 대표님께 말을 거는 친절한 세무 보고서 — 숫자 하나를 문장으로 크게
+   IDEA: 카톡으로 받은 '보고서 묶음' — 목록에서 한 장씩 넘겨 읽는 리포트
+   PICTURE: 올해 막대 + 작년 선을 겹친 연간 추이, 증빙별 도넛
+   COLOUR and TYPE: 흰 바탕, 보고서별 강조색(손익 파랑·매출 초록·매입 주황·인건비 보라) / Noto Sans KR + Figtree 숫자
+   LAYOUT: 휴대폰 한 열, PC에서는 그래프 두 개씩 나란히 */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0e1116);--ink:light-dark(#111418,#eef1f5);--mute:light-dark(#8a929e,#8f99a8);--soft:light-dark(#5b6472,#b5bdc8);--line:light-dark(#e6e9ef,#262c36);--card:light-dark(#f4f6f9,#161b23);--blue:#0a5cff;--blue2:light-dark(#0a5cff,#5c95ff);--gray:light-dark(#b8bec8,#5a6270);--up:light-dark(#0a5cff,#5c95ff);--down:#e6261f}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans KR",system-ui,sans-serif;overflow-x:clip}
+.num,.big b{font-family:Figtree,"Noto Sans KR",sans-serif;font-variant-numeric:tabular-nums;white-space:nowrap}
+main{max-width:980px;margin:0 auto;padding:0 20px 64px}
+.top{position:sticky;top:0;z-index:3;background:var(--bg);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:10px max(20px,calc(50% - 470px))}
+.top a{color:var(--ink);text-decoration:none;min-height:44px;display:flex;align-items:center;font-weight:700}
+.top .firm{margin-left:auto;font-size:14px;color:var(--soft)}
+h1{font-size:30px;line-height:1.2;margin:28px 0 18px;font-weight:800;text-wrap:balance}
+.info{margin:0;border-top:1px solid var(--line)}
+.info div{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.info dt{color:var(--mute)}.info dd{margin:0;font-weight:500;text-align:right}
+.greet{margin:20px 0 0;color:var(--soft)}
+.sep{height:10px;background:var(--card);margin:28px -20px}
+.eyebrow{color:var(--mute);margin:0 0 4px;font-size:15px}
+.big{font-size:clamp(26px,7vw,34px);line-height:1.3;font-weight:800;margin:0;text-wrap:balance}
+.big b{color:var(--acc)}
+.cmp{font-size:19px;color:var(--mute);margin:10px 0 0;font-weight:700}
+h2{font-size:21px;margin:40px 0 12px;font-weight:800}
+h2::before{content:"• "}
+.say{font-size:19px;font-weight:700;line-height:1.45;margin:0 0 18px}
+.say b{color:var(--acc)}
+.legend{display:flex;justify-content:flex-end;gap:16px;font-size:14px;color:var(--soft)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.fig{position:relative;min-height:240px;margin-top:8px;cursor:pointer}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.pick{background:var(--card);border-radius:12px;padding:12px 14px;margin-top:10px;font-size:15px;display:flex;flex-wrap:wrap;gap:4px 16px}
+.list{display:grid;gap:10px;margin-top:8px}
+.item{display:flex;align-items:center;gap:14px;padding:16px;border:1px solid var(--line);border-radius:14px;color:var(--ink);text-decoration:none;min-height:64px}
+.item:hover{border-color:var(--blue2)}
+.item .t{font-weight:700}.item .s{display:block;font-size:14px;color:var(--soft);font-weight:400}
+.item .go{margin-left:auto;color:var(--mute);font-size:20px}
+.ico{flex:none;width:40px;height:40px;border-radius:12px;background:var(--card);display:grid;place-items:center;color:var(--blue2);font-weight:800;font-size:15px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{padding:11px 6px;border-bottom:1px solid var(--line);text-align:right}
+th:first-child,td:first-child{text-align:left}
+th{font-size:13px;color:var(--mute);font-weight:500}
+tr.em td{font-weight:800}
+.up{color:var(--up)}.down{color:var(--down)}
+.seg{display:flex;background:var(--card);border-radius:999px;padding:4px;gap:4px;margin:0 0 14px;overflow-x:auto}
+.seg button{flex:1;min-height:44px;border:0;border-radius:999px;background:none;color:var(--mute);font:inherit;font-weight:700;cursor:pointer;white-space:nowrap;padding:0 12px}
+.seg button[aria-pressed=true]{background:var(--bg);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.sum{display:grid;grid-template-columns:1fr auto;gap:6px 12px;font-size:17px;font-weight:700;padding-bottom:14px;border-bottom:2px solid var(--ink)}
+.person{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
+.person small{display:block;color:var(--mute);font-size:13px}
+.file{display:flex;justify-content:space-between;align-items:center;width:100%;min-height:56px;padding:0 18px;margin-top:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;font-size:16px;cursor:pointer;text-align:left}
+.file span{color:var(--mute)}
+.note{font-size:13px;color:var(--mute);margin:10px 0 0}
+.cta{display:flex;align-items:center;justify-content:center;width:100%;min-height:56px;border-radius:12px;background:var(--blue);color:#fff;font-weight:800;font-size:18px;cursor:pointer}
+.cta input{position:absolute;opacity:0;width:1px;height:1px}
+.cta:focus-within,.file:focus-visible,.seg button:focus-visible,.item:focus-visible,.top a:focus-visible{outline:3px solid #ffb400;outline-offset:2px}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin-top:10px}
+.thumbs img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px}
+.cardrow{display:flex;align-items:center;gap:14px;padding:12px 0}
+.cardrow .ico{width:44px;height:30px;border-radius:6px;font-size:12px}
+.cardrow .off{opacity:.45}
+.cardrow em{margin-left:auto;font-style:normal;color:var(--blue2);font-weight:700;font-size:14px;white-space:nowrap}
+.mt td:nth-child(2){font-weight:700}.mt td small{display:block;color:var(--mute);font-weight:400}
+.avg{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--mute);margin:6px 0 0}.avg .b{color:var(--acc)}
+.legend .dash{width:16px;height:0;border-top:2px dashed var(--blue2);border-radius:0;vertical-align:3px}
+.progs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:22px 28px}
+.prog{display:grid;grid-template-columns:4.2em minmax(0,1fr);gap:10px;align-items:start;border-left:0}
+.prog .pn{color:var(--c);font-weight:800;font-size:18px;padding-top:22px}
+.prog>div:last-child{border-left:3px solid var(--c);padding-left:10px}
+.ph{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--soft);margin:2px 0 4px}
+.pb{position:relative;height:34px;border-radius:8px;background:var(--card);overflow:hidden;margin-bottom:8px}
+.pb i{position:absolute;inset:0 auto 0 0;background:var(--c);border-radius:8px}
+.pb b{position:relative;display:block;padding:5px 12px;color:#fff;font-family:Figtree,sans-serif;font-size:17px}
+.pb.est{background:none;border:1px dashed var(--c)}.pb.est i{display:none}.pb.est b{color:var(--c)}
+.formula{background:var(--card);margin:32px -20px 0;padding:24px 20px}
+.fgrid{display:grid;gap:8px}
+@media(min-width:620px){.fgrid{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);align-items:start}}
+.fc{background:var(--bg);border:1px solid var(--c);border-radius:14px}
+.fc summary{list-style:none;cursor:pointer;padding:14px 16px 6px;display:grid;gap:2px;min-height:44px}
+.fc summary::-webkit-details-marker{display:none}
+.fn{color:var(--c);font-weight:800;font-size:18px}.fv{font-size:22px;font-weight:800}.fs{font-size:13px;color:var(--mute)}
+.chev{justify-self:center;color:var(--soft);transition:transform .2s}.fc[open] .chev{transform:rotate(180deg)}
+.fc table{font-size:13px;margin:0 0 8px}.fc th,.fc td{padding:6px 16px}
+.op{align-self:center;justify-self:center;width:32px;height:32px;border-radius:50%;background:var(--line);color:var(--soft);display:grid;place-items:center;font-weight:800;font-size:20px}
+.op.eq{margin:10px auto}
+.ana{margin-top:28px;border-radius:16px;padding:20px;box-shadow:0 2px 14px rgba(0,0,0,.08);background:var(--bg)}
+.ana h3{margin:0 0 12px;font-size:18px}.ana ul{margin:0;padding-left:18px;display:grid;gap:14px}.ana b{color:#00a05a}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
+.toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+
+:root{--acc:var(--blue2)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:0 40px;align-items:start}
+.under{display:flex;border-bottom:2px solid var(--line);margin:0 0 16px}
+.under button{flex:1;min-height:44px;border:0;background:none;font:inherit;font-weight:700;color:var(--mute);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.under button[aria-pressed=true]{color:var(--ink);border-color:var(--ink)}
+.under button:focus-visible,.more:focus-visible,.paylink:focus-visible{outline:3px solid #ffb400;outline-offset:2px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.pt{border-collapse:separate;border-spacing:0;min-width:100%;font-size:14px}
+.pt th,.pt td{padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:right;vertical-align:middle}
+.pt thead th{color:var(--ink);font-weight:700;font-size:13px;text-align:center;background:var(--bg)}
+.pt thead th small{display:block;color:var(--mute);font-weight:500}
+.pt .rh{position:sticky;left:0;z-index:1;background:var(--bg);text-align:left;font-weight:500;color:var(--ink);white-space:normal;min-width:7.5em;max-width:11em;box-shadow:inset -1px 0 0 var(--line)}
+.pt thead th.cur{background:var(--ink);color:var(--bg);border-radius:10px 10px 0 0}
+.pt td.cur{font-weight:700;background:light-dark(#fafbfc,#141920)}
+.pt td small{display:block;color:var(--mute);font-weight:400;font-size:12px}
+.pt td{color:var(--soft)}.pt td.cur{color:var(--ink)}
+.pt tr.tot th,.pt tr.tot td{background:var(--card);font-weight:700}
+.pt tr.tot td.cur .num{color:var(--acc)}
+.pt .rh em{display:block;font-style:normal;font-size:13px}
+.dn{color:#e8590c;font-style:normal}.upc{color:#1c7ed6;font-style:normal}
+.neg{background:light-dark(#fff0f0,#3a1d1d)!important;color:#e03131!important}
+.donuts{display:flex;gap:12px;justify-content:center}.donut{width:min(46%,190px);height:auto}.donut.dim{opacity:.55}
+.ratio td{padding:10px 6px}.ratio td i{display:inline-block;width:14px;height:14px;border-radius:3px;margin-right:8px;vertical-align:-2px}
+.fixed{list-style:decimal inside;margin:0;padding:0}.fixed li{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.fixed li span:first-child{display:list-item}
+.more{display:block;margin:6px auto 0;min-height:44px;padding:0 16px;border:0;background:none;color:var(--soft);font:inherit;cursor:pointer}
+.empty{padding:28px 0;text-align:center;color:var(--mute)}
+.rcard{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--card);border-radius:16px;padding:20px;margin-top:8px}
+.rcard p{margin:0;font-weight:700}.rcard b{display:block;font-size:34px;margin-top:10px}.rcard .donut{width:150px;flex:none}
+.kcard{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:18px 20px;margin-top:10px}
+.kcard>span:first-child{font-weight:700}.kcard b{font-size:28px;display:block;text-align:right}.kcard em{display:block;text-align:right;font-size:14px}
+.h3{font-size:17px;margin:24px 0 8px}
+.vt{border-top:2px solid var(--acc)}.vt th{text-align:center;font-size:14px;color:var(--ink)}.vt td{padding:9px 12px}
+.vt tr.grp td{background:light-dark(#f1fbf6,#13241d);font-weight:800}.vt tr.grp2 td{background:light-dark(#fff8ec,#2a2114);font-weight:800}
+.vt tr.fin td{background:var(--card);font-weight:800;font-size:17px;border-bottom:2px solid var(--acc)}.vt tr.fin td.num{color:var(--acc);font-size:22px}
+.vt small,.vf small{display:block;color:var(--mute);font-weight:500;font-size:12px}
+.vf tr.ga th,.vf tr.ga td{background:light-dark(#fff3f3,#2a1a1a)}.vf tr.gb th,.vf tr.gb td{background:light-dark(#f2f5ff,#161d30)}
+.vf tr.gc th,.vf tr.gc td{background:light-dark(#fdfde8,#24240f)}.vf tr.gd th,.vf tr.gd td{background:light-dark(#f1fbf4,#13241a)}
+.vf tr.ga th,.vf tr.gb th,.vf tr.gc th,.vf tr.gd th{font-weight:700}
+.vf tr.fin th,.vf tr.fin td{background:light-dark(#fff4e6,#2a2014);font-weight:800}.vf tr.fin td .num{color:var(--acc);font-size:16px}
+.warn{color:#e8590c;font-size:14px;margin:-8px 0 10px}
+.next{border:1px solid #e03131;border-radius:12px;padding:16px 18px;margin-top:18px;font-size:15px}
+.files{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:0 10px;margin-top:20px}
+.paylink{color:var(--acc);font-weight:700;text-decoration:none;display:inline-flex;min-height:44px;align-items:center}
+.sch{display:flex;gap:16px;padding:12px 0}.sch .day{flex:none;width:64px;height:72px;border:1px solid var(--line);border-radius:10px;display:grid;place-content:center;text-align:center}
+.sch .day b{font-size:22px;font-family:Figtree,sans-serif}.sch .day small{color:var(--mute);font-size:12px}.sch .st{display:block;color:var(--mute);font-weight:700}
+.tip{background:var(--card);border-radius:16px;padding:20px;margin-top:22px}.tip p{margin:0 0 16px}
+.cta{background:#12b886}
+.center{text-align:center;margin:4px 0 18px}
+.ico.k0{background:#d3f9e8;color:#0c8a5f}.ico.k1{background:#ffe8dc;color:#e8590c}.ico.k2{background:#e7e3fb;color:#6e4fd8}.ico.k3{background:#e7edf5;color:#556}
+.formula{margin-left:-20px;margin-right:-20px}
+@media(min-width:1020px){.formula,.sep{margin-left:0;margin-right:0;border-radius:16px}}
+.noticebox{background:light-dark(#fff8e6,#2a2312);border:1px solid light-dark(#f5d48a,#5c4a1e);border-radius:12px;padding:14px 16px;margin:18px 0;font-size:15px;line-height:1.55}
+.exempt{background:var(--card);border-radius:16px;padding:18px 20px;margin-top:22px}.exempt h3{margin:0 0 12px;font-size:16px}.exempt p{margin:8px 0 0}
+.meter{position:relative;height:16px;border-radius:8px;background:var(--line)}.meter i{position:absolute;inset:0 auto 0 0;border-radius:8px;background:var(--acc)}.meter s{position:absolute;top:-5px;bottom:-5px;width:3px;background:#e8590c;border-radius:2px}
+.vt td.sub{font-size:13px;color:var(--mute);padding-top:0}
+.need{padding-left:20px}.need li{margin:6px 0}
+.acl{margin:0}
+.ac{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0}
+.ac b{display:block;font-size:16px}.ac small{display:block;color:var(--mute);font-size:13px;margin-top:2px;font-weight:600}
+.aci{display:grid;place-items:center;color:#fff;font-size:12px;font-weight:800;width:40px;height:40px;border-radius:50%;background:var(--gray)}
+.aci.card{width:28px;height:40px;border-radius:4px;justify-self:center}
+.ac.dim .aci{background:var(--line)!important;color:var(--mute)}.ac.dim b,.ac.dim small{color:var(--gray)}
+.acs{font-size:14px;font-weight:700;white-space:nowrap}.acs.need{color:#12a37f}.acs.no{color:var(--gray)}.acs.wait{color:var(--blue2)}.acs.fail{color:var(--down)}
+.acgap{border:0;border-top:1px solid var(--line);margin:14px 0}
+.addrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.add{position:relative;display:flex;align-items:center;justify-content:center;min-height:52px;border:1px dashed var(--gray);border-radius:12px;color:var(--ink);font-weight:700;font-size:15px;cursor:pointer;text-align:center;padding:0 8px}
+.add input{position:absolute;opacity:0;width:1px;height:1px}
+.add:focus-within{outline:3px solid #ffb400;outline-offset:2px}
+.thumbs figure{position:relative;margin:0}.thumbs figcaption{position:absolute;left:4px;bottom:4px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;padding:2px 6px;border-radius:6px}
+.logo{display:block;height:26px;width:auto}
+@media(prefers-color-scheme:dark){.logo{background:#fff;border-radius:6px;padding:3px 6px;height:30px}}
+.lk{max-width:380px;margin:48px auto;padding:0 20px;text-align:center}
+.lk-ico{font-size:40px}.lk h1{font-size:24px;margin:10px 0 6px}.lk-sub{color:var(--soft);line-height:1.6;margin:0 0 22px}
+#lkp{width:100%;box-sizing:border-box;font-size:28px;letter-spacing:10px;text-align:center;padding:14px;border:1.5px solid var(--line);border-radius:14px;background:var(--card,#fff);color:inherit}
+#lkp:focus{outline:none;border-color:#1d6fc4}
+.lk-rem{display:flex;gap:8px;align-items:center;justify-content:center;font-size:14px;color:var(--soft);margin:14px 0}
+#lkb{width:100%;padding:15px;border:0;border-radius:14px;background:#1d6fc4;color:#fff;font-size:17px;font-weight:700}
+#lkb:disabled{opacity:.5}.lk-msg{color:#d63c2f;min-height:22px;margin:12px 0 0;font-size:14px}
+.lk-foot{font-size:12px;color:var(--soft);margin-top:28px;line-height:1.6}.lk-wait{text-align:center;color:var(--soft);margin-top:60px}
+</style>
 </head>
 <body>
-<div class="ld" id="ld"><div><img src="icon.png" alt="">보고서를 여는 중이에요…</div></div>
-<iframe id="rp" title="유창세무회계 보고서" allow="clipboard-write"></iframe>
+<div class="top"><a href="#home" id="back">‹ 보고서 목록</a><span class="firm"><img class="logo" alt="유창세무회계" src="data:image/png;base64,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"></span></div>
+<main id="app"></main>
+<div class="toast" id="toast" role="status"></div>
 <script>
-var APP = "https:" + "//script.google.com/macros/s/AKfycbxMKgTgxIBiiADxzGp-1HrBDD132EjyS7Wm__ihDRz2i_uwUnhrGaupFCTf0folbsSHoQ/exec";
-var f = document.getElementById("rp");
-var ld = document.getElementById("ld"), hide = function () { ld.className = "ld hide"; };
-window.addEventListener("message", function (e) { if (e.data === "uc-ready") hide(); });
-setTimeout(function () {
-  if (ld.className.indexOf("hide") >= 0) return;
-  location.replace(APP + location.search + location.hash);
-}, 7000);
-f.src = APP + location.search + location.hash;
+const APP = "https:" + "//script.google.com/macros/s/AKfycbxMKgTgxIBiiADxzGp-1HrBDD132EjyS7Wm__ihDRz2i_uwUnhrGaupFCTf0folbsSHoQ/exec";
+const KEY = new URLSearchParams(location.search).get("k") || "";
+const api = body => fetch(APP, {method: "POST", credentials: "omit", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify(body)}).then(r => r.json());
+let SESS = {t: "", e: 0};
+(function () {
+  const app = document.getElementById("app"), back = document.getElementById("back"), LS = "uc_pin_" + KEY;
+  const direct = () => location.replace(APP + location.search + location.hash);
+  if (back) back.style.visibility = "hidden";
+  app.innerHTML = '<p class="lk-wait">보고서를 여는 중이에요…</p>';
+  if (!KEY) { app.innerHTML = '<p class="lk-wait">보고서를 찾을 수 없어요.<br>받으신 카카오톡 링크를 다시 눌러 주세요.</p>'; return; }
+  let saved = null; try { saved = JSON.parse(localStorage.getItem(LS) || "null"); } catch (_) {}
+  const open = r => { SESS = {t: r.st || "", e: r.se || 0}; if (back) back.style.visibility = ""; startApp(r.data); };
+  const ui = msg => {
+    app.innerHTML = '<section class="lk"><div class="lk-ico">🔒</div><h1>대표님 확인</h1><p class="lk-sub">보고서를 보시려면 대표님 <b>생년월일 6자리</b>를 입력해 주세요.</p>'
+      + '<form id="lkf" autocomplete="off"><input id="lkp" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" placeholder="예) 750315" aria-label="생년월일 6자리">'
+      + '<label class="lk-rem"><input type="checkbox" id="lkr" checked> 이 기기에서 30일 동안 다시 묻지 않기</label>'
+      + '<button type="submit" id="lkb">보고서 열기</button><p class="lk-msg" id="lkm" role="alert">' + (msg || "") + '</p></form>'
+      + '<p class="lk-foot">생년월일은 확인에만 쓰이고 저장되지 않아요.<br>문의: 유창세무회계 담당자</p></section>';
+    const f = document.getElementById("lkf"), p = document.getElementById("lkp"), b = document.getElementById("lkb"), m = document.getElementById("lkm");
+    p.focus();
+    f.addEventListener("submit", ev => {
+      ev.preventDefault(); const pin = p.value.replace(/\D/g, "");
+      if (pin.length !== 6) { m.textContent = "생년월일 6자리를 입력해 주세요."; return; }
+      b.disabled = true; b.textContent = "확인 중…"; m.textContent = "";
+      const rem = document.getElementById("lkr").checked;
+      api({action: "unlock", k: KEY, pin: pin, remember: rem}).then(r => {
+        if (r && r.ok) { if (rem && r.t) { try { localStorage.setItem(LS, JSON.stringify({t: r.t, e: r.e})); } catch (_) {} } open(r); }
+        else { b.disabled = false; b.textContent = "보고서 열기"; p.value = ""; m.textContent = (r && r.msg) || "다시 시도해 주세요."; if (r && r.left === 0) b.disabled = true; }
+      }).catch(() => { b.disabled = false; b.textContent = "보고서 열기"; m.textContent = "연결이 불안정해요. 다시 시도해 주세요."; });
+    });
+  };
+  const ok = saved && saved.t && saved.e > Date.now();
+  api({action: "open", k: KEY, t: ok ? saved.t : "", e: ok ? saved.e : 0}).then(r => {
+    if (r && r.ok) open(r);
+    else if (r && (r.locked || r.expired)) { if (r.expired) { try { localStorage.removeItem(LS); } catch (_) {} } ui(); }
+    else app.innerHTML = '<p class="lk-wait">' + ((r && r.msg) || "보고서를 찾을 수 없어요.") + '<br>계속 안 열리면 유창세무회계로 연락해 주세요.</p>';
+  }).catch(direct);
+})();
+
+function startApp(RAW) {
+const MT = RAW.meta, Y = MT.year, M = MT.month, GANI = MT.taxType.indexOf("간이") >= 0;
+const $ = id => document.getElementById(id);
+const won = v => Math.round(v).toLocaleString("ko-KR");
+const sum = a => a.reduce((x, y) => x + y, 0);
+const man = v => { v = Math.round(v); const e = Math.floor(Math.abs(v) / 10000), r = Math.abs(v) % 10000; return e ? `${e}억${r ? " " + won(r) + "만원" : "원"}` : won(Math.abs(v)) + "만원"; };
+const sman = v => (v < 0 ? "−" : "") + man(v);
+const mm = m => String(m).padStart(2, "0");
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pct = (a, b) => b ? a / b * 100 : 0;
+const chg = (d, f, base) => Math.round(d) === 0 ? `${base} 같아요` : `${base} ${f(Math.abs(d))} ${d > 0 ? "늘었어요" : "줄었어요"}`;
+const wonf = v => won(v) + "원";
+const lastDay = (y, m) => new Date(y, m, 0).getDate();
+const DOW = "일월화수목금토";
+const cut = a => a.slice(0, M);
+const range = (a, b) => Array.from({length: Math.max(0, b - a + 1)}, (_, i) => a + i);
+
+// ---------- 데이터 ----------
+const SK = Object.keys(RAW.S).filter(k => k !== "X"), BK = Object.keys(RAW.B);
+const salesW = range(1, M).map(m => sum(SK.map(k => RAW.S[k].a[m - 1])));
+const buyW = range(1, M).map(m => sum(BK.map(k => RAW.B[k].a[m - 1])));
+const payW = cut(RAW.pay);
+const D = {sales: salesW.map(v => v / 10000), buy: buyW.map(v => v / 10000), payM: payW.map(v => v / 10000),
+  lySalesAvg: RAW.LY ? RAW.LY.sales / 12 / 10000 : null, lyPayAvg: RAW.LY && RAW.LY.pay ? RAW.LY.pay / 12 / 10000 : null};
+const assetSale = RAW.S.X ? sum(cut(RAW.S.X.a)) + sum(cut(RAW.S.X.v)) : 0;
+const gross = (bag, codes, ms) => sum(ms.map(m => sum(codes.filter(c => bag[c]).map(c => bag[c].a[m - 1] + bag[c].v[m - 1]))));
+const vatOf = (bag, codes, ms) => sum(ms.map(m => sum(codes.filter(c => bag[c]).map(c => bag[c].v[m - 1]))));
+
+function aggr(k, ms){ const bag = k === "s" ? RAW.S : RAW.B, keys = k === "s" ? SK : BK, amt = {}, cnt = {};
+  keys.forEach(c => { const l = bag[c].label; amt[l] = (amt[l] || 0) + sum(ms.map(m => bag[c].a[m - 1])); cnt[l] = (cnt[l] || 0) + sum(ms.map(m => bag[c].n[m - 1])); });
+  return {amt, cnt, T: Object.keys(amt)}; }
+function cols(u){
+  if (u === "m") return [M, M - 1, M - 2].filter(m => m >= 1).map(m => ({l: `${Y}년 ${mm(m)}월`, ms: [m]}));
+  const size = {q: 3, h: 6, y: 12}[u], idx = Math.ceil(M / size), part = M < idx * size ? ` (~${M}월)` : "";
+  const name = i => u === "q" ? `${Y}년 ${i}분기` : u === "h" ? `${Y}년 ${i === 1 ? "상" : "하"}반기` : `${Y}년`;
+  const L = [{l: name(idx) + part, ms: range((idx - 1) * size + 1, M)}];
+  for (let i = idx - 1; i >= 1 && L.length < 3; i--) L.push({l: name(i), ms: range((i - 1) * size + 1, i * size)});
+  return L;
+}
+
+// ---------- 부가세: 간이과세자 (법 제63·46·69조, 시행령 제111조) / 일반과세자 ----------
+const CARD_LIMIT = 10000000, EXEMPT = 48000000;
+function vatCalc(ms){
+  if (GANI) {
+    const supply = gross(RAW.S, Object.keys(RAW.S), ms), base = Math.floor(supply * MT.vaRate * .1);
+    const buyGross = gross(RAW.B, ["51","55","57","61"], ms), inCred = Math.min(Math.floor(buyGross * .005), base);
+    const cardBase = gross(RAW.S, ["17","22"], ms), card = Math.max(0, Math.min(Math.floor(cardBase * .013), CARD_LIMIT, base - inCred));
+    const sRows = Object.keys(RAW.S).map(k => [RAW.S[k].label, gross(RAW.S, [k], ms)]).filter(r => r[1]);
+    return {supply, base, buyGross, inCred, cardBase, card, sRows, est: base - inCred - card - MT.prepaid};
+  }
+  const A = vatOf(RAW.S, Object.keys(RAW.S), ms), Bv = vatOf(RAW.B, ["51","55","57","61"], ms);
+  const cardBase = gross(RAW.S, ["17","22"], ms), card = Math.max(0, Math.min(Math.floor(cardBase * .013), CARD_LIMIT, A - Bv));
+  return {A, B: Bv, cardBase, card, est: A - Bv - card - MT.prepaid};
+}
+const VAT_MS = GANI ? range(1, M) : (M <= 6 ? range(1, M) : range(7, M));
+
+// ---------- 공통 조각 ----------
+const head = (title, info, greet) => `<h1>${title}</h1>
+  <dl class="info">${info.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
+  <p class="greet">대표님, 안녕하세요.<br>${greet}<br>보고서 관련 문의는 언제든 유창세무회계 담당자에게 연락주세요.</p><div class="sep"></div>`;
+const base = [["사업장명", MT.name], ["과세유형", MT.taxType]];
+const span = (a, b) => `${mm(a)}.01 ~ ${mm(b)}.${lastDay(Y, b)}`;
+const st = {};
+const seg = (key, opts, def) => { const v = st[key] ?? def; return `<div class="seg" role="group">${opts.map(([val, lab]) => `<button type="button" data-st="${key}:${val}" aria-pressed="${val === v}">${lab}</button>`).join("")}</div>`; };
+const unitTabs = key => seg(key, [["m","월별"],["q","분기"],["h","반기"],["y","연간"]], "m");
+const ptable = (heads, rows, unit = "건") => `<div class="scroll"><table class="pt"><thead><tr><th class="rh"></th>${heads.map((h, i) => `<th class="${i ? "" : "cur"}">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr class="${r.tot ? "tot" : ""}"><th class="rh" scope="row">${r.n}${r.tag || ""}</th>${r.v.map((x, i) => `<td class="${i ? "" : "cur"}"><span class="num">${won(x[0])}원</span><small>${x[1]}${unit}</small></td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+function donut(parts, l1, l2, dim){
+  const tot = sum(parts.map(p => Math.max(0, p.v))) || 1, C = 2 * Math.PI * 40; let off = 0;
+  return `<svg viewBox="0 0 120 120" class="donut${dim ? " dim" : ""}" role="img" aria-label="${l1} ${l2} 구성비율"><circle cx="60" cy="60" r="40" fill="none" stroke="var(--line)" stroke-width="24"/>${parts.filter(p => p.v > 0).map(p => { const len = p.v / tot * C, s = `<circle cx="60" cy="60" r="40" fill="none" stroke="${p.c}" stroke-width="24" stroke-dasharray="${len} ${C - len}" stroke-dashoffset="${-off}" transform="rotate(-90 60 60)"/>`; off += len; return s; }).join("")}<text x="60" y="57" text-anchor="middle" font-size="10" fill="var(--ink)">${l1}</text><text x="60" y="71" text-anchor="middle" font-size="10" fill="var(--ink)">${l2}</text></svg>`;
+}
+const files = list => `<div class="files">${list.map(f => `<button type="button" class="file" data-file="1">${f}<span aria-hidden="true">📎</span></button>`).join("")}</div>`;
+const legend = items => `<div class="legend">${items.map(([c, l, dash]) => `<span><i style="${dash ? `border-top:2px dashed ${c};height:0;width:16px;border-radius:0;vertical-align:3px` : `background:${c}`}"></i>${l}</span>`).join("")}</div>`;
+const notice = t => `<div class="noticebox">${t}</div>`;
+const PAL = {s: ["#12936f","#7fe0bf","#0d4f3c","#19c08f","#b9efd9","#8a8f98","#c6cad1","#e4e6ea"], b: ["#ff9a2e","#f6d3ad","#ff7a3d","#ffd8a8","#c2410c","#8a8f98","#c6cad1","#e4e6ea","#ffbe6a"]};
+const COL = {s: "#0f9d76", b: "#f08a24", p: "#b06ad9", n: "var(--blue2)"};
+const NOTE = MT.note ? notice(esc(MT.note)) : "";
+
+// ---------- 목록 ----------
+const P = () => D.sales.map((v, i) => v - D.buy[i] - D.payM[i]);
+const R = {
+  biz: ["사업분석 보고서","분석",() => `누적손익 ${sman(sum(P()))} 추정`],
+  sales: ["매출 보고서","매출",() => `${M}월 매출 ${man(D.sales[M - 1])}`],
+  buy: ["매입 보고서","매입",() => `${M}월 매입 ${man(D.buy[M - 1])}`],
+  pay: ["인건비 보고서","급여",() => `${M}월 인건비 ${wonf(payW[M - 1])}`],
+  vat: ["예상 부가세 보고서","부가",() => { const v = vatCalc(VAT_MS); return `${v.est >= 0 ? "납부" : "환급"} 예상 ${wonf(Math.abs(v.est))}`; }],
+  vatfile: ["부가세 신고분석 보고서","신고",() => `지난 신고 분석`],
+  salesbook: ["거래처 매출장 보고서","장부",() => `분기별 매출처 비교`],
+  buybook: ["거래처 매입장 보고서","장부",() => `분기별 매입처 비교`],
+  receipt: ["영수증 보고서","영수",() => "수기 영수증 등록과 이달의 세무일정"]
+};
+const V = {};
+V.home = () => `<h1>${esc(MT.name)} 대표님,<br>${M}월 보고서 ${Object.keys(R).length}개가 도착했어요</h1>
+  <p class="greet" style="margin-top:0">${esc(MT.name)} · ${esc(MT.taxType)} · ${esc(MT.upte)}</p>${NOTE}
+  <div class="list">${Object.entries(R).map(([k, r]) => `<a class="item" href="#${k}"><span class="ico">${r[1]}</span><span><span class="t">${r[0]}</span><span class="s">${r[2]()}</span></span><span class="go" aria-hidden="true">›</span></a>`).join("")}</div>`;
+
+// ---------- 사업분석 ----------
+const prog = (n, col, arr, lyTot) => { const c = sum(arr), e = c / M * 12;
+  if (!lyTot) return `<div class="prog" style="--c:${col}"><div class="pn">${n}</div><div><div class="ph"><span>현재 ${sman(c)}</span><span>작년 자료 없음</span></div><div class="pb"><i style="width:0"></i><b style="color:var(--soft)">—</b></div><div class="ph"><span>올해 예상 ${sman(e)}</span></div></div></div>`;
+  const r1 = c / lyTot * 100, r2 = e / lyTot * 100;
+  return `<div class="prog" style="--c:${col}"><div class="pn">${n}</div><div><div class="ph"><span>현재 ${sman(c)}</span><span>작년 ${sman(lyTot)}</span></div>
+  <div class="pb"><i style="width:${Math.max(0, Math.min(100, r1))}%"></i><b>${Math.round(r1)}%</b></div><div class="ph"><span>올해 예상 ${sman(e)}</span></div><div class="pb est"><i></i><b>${Math.round(r2)}%</b></div></div></div>`; };
+const fc = (n, col, arr, sub, pre = "") => `<details class="fc" style="--c:${col}"><summary><span class="fn">${n}</span><span class="fv num">${pre}${sman(sum(arr))}</span><span class="fs">${sub}</span><span class="chev" aria-hidden="true">⌄</span></summary>
+  <table><thead><tr><th>월</th><th>올해</th></tr></thead><tbody>${arr.map((v, i) => `<tr><td>${i + 1}월</td><td class="num">${sman(v)}</td></tr>`).join("")}</tbody></table></details>`;
+V.biz = () => { const p = P(), cur = sum(p), est = cur / M * 12, rate = pct(cur, sum(D.sales)), last = p[M - 1], LY = RAW.LY;
+  return head("사업분석 보고서", [...base, ["분석기간", span(1, M)]], "사업분석 보고서를 보내드립니다.") +
+  `<p class="eyebrow">올해 장부 기준</p><p class="big">${mm(M)}월말 기준 누적손익은<br><b>${sman(cur)}</b>으로 추정돼요.</p><p class="cmp">올해 손익 예상은 ${sman(est)}이에요.</p>${NOTE}
+  <div class="two"><section><h2>월별 손익추이</h2><p class="say">손익이 가장 컸던 달은 <b>${p.indexOf(Math.max(...p)) + 1}월</b>,<br>가장 작았던 달은 <b>${p.indexOf(Math.min(...p)) + 1}월</b>이에요.</p>
+  ${legend([["var(--acc)","올해"]])}<p class="avg"><span class="b">┄ 올해 월평균 ${sman(cur / M)}</span></p>
+  <div class="fig" data-k="pm"><svg id="c-pm" role="img" aria-label="월별 손익"></svg></div><div class="pick" id="p-pm"></div></section>
+  <section><h2>누적 손익추이</h2><p class="say">${mm(M)}월까지 총 손익은<br><b>${wonf(cur * 10000)}</b>입니다.</p>${legend([["var(--acc)","올해"],["var(--acc)","연말 예상",1]])}
+  <div class="fig" data-k="cum"><svg id="c-cum" role="img" aria-label="누적 손익과 연말 예상"></svg></div></section></div>
+  <h2>작년 전체와 비교</h2><div class="progs">${prog("매출", COL.s, D.sales, LY && LY.sales / 10000)}${prog("매입", COL.b, D.buy, 0)}${prog("인건비", COL.p, D.payM, LY && LY.pay / 10000)}${prog("손익", COL.n, p, 0)}</div>
+  <p class="note">* VAT 제외 기준 · 올해 예상 = 현재까지 월평균 × 12개월<br>* 작년은 전기분 손익계산서의 연간 합계예요. 매입은 같은 기준의 작년 자료가 없어 비교하지 않았어요.<br>* 손익 = 매출 − 매입 − 인건비 (감가상각비 등이 빠져 장부상 손익과 달라요)</p>
+  <div class="formula"><div class="fgrid">${fc("매출(A)", COL.s, D.sales, LY ? `작년 연간 ${man(LY.sales / 10000)}` : "작년 자료 없음")}<span class="op">−</span>${fc("매입(B)", COL.b, D.buy, "증빙 합계 (공급가액)")}<span class="op">−</span>${fc("인건비(C)", COL.p, D.payM, LY && LY.pay ? `작년 연간 ${man(LY.pay / 10000)}` : "원천세 신고 기준")}</div>
+  <div class="op eq">=</div>${fc("손익(A−B−C)", COL.n, p, LY ? `작년 영업손익 ${sman(LY.op / 10000)} (장부 기준)` : "", "약 ")}</div>
+  <div class="ana"><h3>대표님의 손익분석 결과</h3><ul><li>${mm(M)}월까지 계산한 올해 총 손익은<br><b>${sman(cur)}으로 보여요.</b><br>${M}월 한 달 동안 ${man(Math.abs(last))} ${last >= 0 ? "늘었어요" : "줄었어요"}.</li>
+  <li>현재 전체 매출에서 남는 돈의 비율은<br><b>약 ${Math.round(rate)}%예요.</b></li></ul></div>`; };
+
+// ---------- 매출 / 매입 ----------
+function topTable(side, tab){
+  const L = RAW.T.filter(c => c.side === side && (tab === "all" || c.t === tab)), ms = range(Math.max(1, M - 5), M).reverse();
+  const rows = L.map(c => ({c, tot: sum(ms.map(m => c.m[m - 1])), n: sum(ms.map(m => c.c[m - 1]))})).filter(r => r.tot).sort((a, b) => b.tot - a.tot).slice(0, 5);
+  if (!rows.length) return `<p class="empty">전자(세금)계산서 거래처가 없어요.</p>`;
+  return ptable([`${ms.length}개월 합계`, ...ms.map(m => `${Y}년 ${mm(m)}월`)], rows.map((r, i) => ({n: `${i + 1}. ${esc(r.c.n)}`, v: [[r.tot, r.n], ...ms.map(m => [r.c.m[m - 1], r.c.c[m - 1]])]})));
+}
+function trend(k){
+  const n = k === "s" ? "매출" : "매입", arr = k === "s" ? D.sales : D.buy, a = sum(arr), ly = k === "s" ? D.lySalesAvg : null;
+  const C = cols(st[k + "u"] ?? "m"), ag = C.map(c => aggr(k, c.ms)), T = ag[0].T;
+  const rows = T.map(t => ({n: t, v: ag.map(g => [g.amt[t], g.cnt[t]])})); rows.push({n: `총${n}`, tot: 1, v: ag.map(g => [sum(Object.values(g.amt)), sum(Object.values(g.cnt))])});
+  const CC = cols(st[k + "cu"] ?? "m"), g0 = aggr(k, CC[0].ms), g1 = CC[1] ? aggr(k, CC[1].ms) : null, s0 = sum(Object.values(g0.amt)) || 1, s1 = g1 ? sum(Object.values(g1.amt)) || 1 : 1;
+  const lab = l => { const x = l.match(/^(\d+)년 (.*)$/); return x ? [x[1] + "년", x[2].replace(/ \(.*\)/, "")] : [l, ""]; };
+  const fixed = k === "b" && M >= 3 ? (() => { const F = RAW.T.filter(c => c.side === "b" && [0, 1, 2].every(i => c.m[M - 1 - i] > 0)).sort((x, y) => y.m[M - 1] - x.m[M - 1]); const open = st.fixOpen;
+    return `<h2>고정지출</h2><p class="note" style="margin-top:-6px">* 최근 3개월(${M - 2}~${M}월) 연속 발행된 전자(세금)계산서 기준</p>
+    <div class="sum" style="margin-top:14px"><span>총 ${F.length}건</span><span class="num">${wonf(sum(F.map(c => c.m[M - 1])))}</span><span></span><span class="num" style="font-size:14px;color:var(--mute);font-weight:500">지난달 ${wonf(sum(F.map(c => c.m[M - 2])))}</span></div>
+    <ol class="fixed">${F.slice(0, open ? F.length : 5).map(c => `<li><span>${esc(c.n)}</span><span class="num">${wonf(c.m[M - 1])}</span></li>`).join("")}</ol>
+    ${F.length > 5 ? `<button type="button" class="more" data-st="fixOpen:${open ? "" : "1"}">${open ? "접기 ⌃" : "더보기 ⌄"}</button>` : ""}`; })() : "";
+  const lySay = ly ? `작년 월평균 ${man(ly)}보다 올해 월평균이<br><b>${man(Math.abs(a / M - ly))}</b> ${a / M >= ly ? "많아요" : "적어요"}.` : `가장 많았던 달은 <b>${arr.indexOf(Math.max(...arr)) + 1}월 ${man(Math.max(...arr))}</b>이에요.`;
+  const extra = k === "s" && assetSale ? notice(`${esc(RAW.S.X.label)} ${wonf(assetSale)}은 영업 매출이 아니라서 그래프에서 뺐어요. 부가세 계산에는 포함돼요.`) : (k === "b" ? NOTE : "");
+  return head(`${n} 보고서`, [...base, ["분석기간", span(M, M)]], `${mm(M)}월 ${n} 보고서를 보내드립니다.`) +
+  `<p class="eyebrow">VAT 제외</p><p class="big">${mm(M)}월 기준 ${n}은<br><b>${man(arr[M - 1])}</b>으로 추정돼요.</p>${M > 1 ? `<p class="cmp">${chg(arr[M - 1] - arr[M - 2], man, "지난달보다")}</p>` : ""}${extra}
+  <div class="two"><section><h2>연간 ${n}추이</h2><p class="say">${lySay}</p>
+  ${legend(ly ? [["var(--gray)","작년 월평균"],["var(--acc)","올해"]] : [["var(--acc)","올해"]])}<p class="avg">${ly ? `<span>┄ 작년 월평균 ${man(ly)}</span>` : ""}<span class="b">┄ 올해 월평균 ${man(a / M)}</span></p>
+  <div class="fig" data-k="m"><svg id="c-m" role="img" aria-label="월별 ${n}"></svg></div><div class="pick" id="p-m"></div></section>
+  <section><h2>누적 ${n}추이</h2><p class="say">${mm(M)}월까지 총 ${n}은<br><b>${wonf(a * 10000)}</b>이에요.</p>
+  ${legend(ly ? [["var(--gray)","작년 (월평균 누적)"],["var(--acc)","올해"],["var(--acc)","예상",1]] : [["var(--acc)","올해"],["var(--acc)","예상",1]])}
+  <div class="fig" data-k="cum"><svg id="c-cum" role="img" aria-label="누적 ${n}"></svg></div></section></div>
+  <h2>${n} 집계</h2>${unitTabs(k + "u")}${ptable(C.map(c => c.l), rows)}
+  <h2>${n} 구성비율</h2>${unitTabs(k + "cu")}
+  <div class="two"><div class="donuts">${donut(T.map((t, i) => ({v: g0.amt[t], c: PAL[k][i % 9]})), ...lab(CC[0].l))}${g1 ? donut(T.map((t, i) => ({v: g1.amt[t], c: PAL[k][i % 9]})), ...lab(CC[1].l), 1) : ""}</div>
+  <table class="ratio"><thead><tr><th></th><th>${lab(CC[0].l)[1]}</th><th>${g1 ? lab(CC[1].l)[1] : ""}</th></tr></thead><tbody>${T.map((t, i) => `<tr><td><i style="background:${PAL[k][i % 9]}"></i>${t}</td><td class="num"><b>${Math.round(pct(g0.amt[t], s0))}%</b></td><td class="num" style="color:var(--mute)">${g1 ? Math.round(pct(g1.amt[t], s1)) + "%" : ""}</td></tr>`).join("")}</tbody></table></div>
+  <h2>거래처 Top5</h2><p class="note" style="margin-top:-6px">* 전자(세금)계산서 공급가액 기준</p>
+  ${seg(k + "tp", [["all","전체"],["세금","전자세금계산서"],["계산","전자계산서"]], "all")}${topTable(k, st[k + "tp"] ?? "all")}${fixed}`;
+}
+V.sales = () => trend("s");
+V.buy = () => trend("b");
+
+// ---------- 인건비 ----------
+const KINDS = ["근로","일용","사업","기타"];
+V.pay = () => { const tab = st.payTab ?? "전체", cur_ = RAW.people.filter(p => p.m[M - 1] > 0), list = tab === "전체" ? cur_ : cur_.filter(p => p.k === tab);
+  const tot = payW[M - 1], prev = M > 1 ? payW[M - 2] : 0, ytd = sum(payW), lyAvg = D.lyPayAvg ? D.lyPayAvg * 10000 : null;
+  const cm = [M, M - 1, M - 2].filter(m => m >= 1), by = (m, k) => RAW.people.filter(p => p.k === k && p.m[m - 1] > 0);
+  const rows = KINDS.map(k => ({n: k, v: cm.map(m => [sum(by(m, k).map(p => p.m[m - 1])), by(m, k).length])}));
+  rows.push({n: "총 지급", tot: 1, v: cm.map(m => [payW[m - 1], RAW.people.filter(p => p.m[m - 1] > 0).length])});
+  const lastM = payW.map((v, i) => v > 0 ? i + 1 : 0).reduce((a, b) => Math.max(a, b), 0) || M;
+  const ratio = (n, b_, c1, c2) => `<div class="rcard"><div><p>${mm(lastM)}월 ${n}<br>${man(b_ / 10000)} 대비</p><b class="num">${pct(payW[lastM - 1], b_).toFixed(1)}%</b></div>${donut([{v: payW[lastM - 1], c: c1}, {v: Math.max(0, b_ - payW[lastM - 1]), c: c2}], "인건비", won(payW[lastM - 1]))}</div>`;
+  return head("인건비 보고서", [...base, ["분석기간", span(M, M)]], `${mm(M)}월 인건비 보고서를 보내드립니다.`) +
+  `<p class="eyebrow">원천세 신고 기준</p><p class="big">${tot ? `${mm(M)}월 인건비는<br><b>${wonf(tot)}</b>이에요.` : `${mm(M)}월에는 지급한<br>인건비가 <b>없어요</b>.`}</p>
+  <p class="cmp">${tot ? chg(tot - prev, wonf, "지난달에 비해") : `올해 누적 ${wonf(ytd)}이에요.`}</p>
+  <h2>${mm(M)}월 급여대상자</h2>${seg("payTab", [["전체","전체"], ...KINDS.map(k => [k, k])], "전체")}
+  <div class="sum"><span>급여 합계 (${list.length}명)</span><span class="num">${wonf(sum(list.map(p => p.m[M - 1])))}</span><span>세후 합계</span><span class="num">${wonf(sum(list.map(p => p.net[M - 1])))}</span></div>
+  ${list.length ? list.map(p => `<div class="person"><span class="ico k${Math.max(0, KINDS.indexOf(p.k))}">${esc(p.n[0] || "?")}</span><span>${esc(p.n)}<small>${esc(p.k)}소득</small></span><span class="num" style="text-align:right">급여 ${wonf(p.m[M - 1])}<small>세후 ${wonf(p.net[M - 1])}</small></span></div>`).join("") : `<p class="empty">${mm(M)}월 ${tab === "전체" ? "" : tab + "소득 "}지급 내역이 없어요.</p>`}
+  <h2>소득별 급여 현황</h2>${ptable(cm.map(m => `${Y}년 ${mm(m)}월`), rows, "명")}
+  <h2>인건비 추이</h2><p class="say">${lyAvg ? `작년 월평균 ${man(lyAvg / 10000)}보다 올해 월평균이<br><b>${man(Math.abs(ytd / M - lyAvg) / 10000)}</b> ${ytd / M >= lyAvg ? "많아요" : "적어요"}.` : `올해 누적 인건비는 <b>${wonf(ytd)}</b>이에요.`}</p>
+  ${legend(lyAvg ? [["var(--gray)","작년 월평균"],["var(--acc)","올해"]] : [["var(--acc)","올해"]])}
+  <div class="fig" data-k="pay"><svg id="c-pay" role="img" aria-label="월별 인건비"></svg></div><div class="pick" id="p-pay"></div>
+  ${ytd ? `<h2>인건비 구성비율</h2><div class="two">${ratio("매출", salesW[lastM - 1], COL.s, "#c8eee0")}${ratio("매입", buyW[lastM - 1], COL.b, "#fbe6cd")}</div>` : ""}`; };
+
+// ---------- 예상 부가세 ----------
+V.vat = () => { const c = vatCalc(VAT_MS), prevMs = VAT_MS.slice(0, -1), prev = prevMs.length ? vatCalc(prevMs) : null, dd = prev ? c.est - prev.est : 0;
+  const row = (n, v, cls = "") => `<tr class="${cls}"><td>${n}</td><td class="num">${wonf(v)}</td></tr>`;
+  const q = [1, 2, 3, 4].map(i => { const a = (i - 1) * 3 + 1, b = Math.min(i * 3, M); return a > M ? null : vatCalc(range(a, b)).est + MT.prepaid; }); V.vat.q = q;
+  const p0 = VAT_MS[0], end = GANI ? 12 : (M <= 6 ? 6 : 12), due = new Date(end === 12 ? Y + 1 : Y, end === 12 ? 0 : 6, 25);
+  let body;
+  if (GANI) { const annual = (c.supply - assetSale) / M * 12 + assetSale;
+    body = `<div class="exempt"><h3>납부의무 면제 기준 (공급대가 4,800만원)</h3><div class="meter"><i style="width:${Math.min(100, c.supply / EXEMPT * 100)}%"></i><s style="left:${Math.min(100, annual / EXEMPT * 100)}%"></s></div>
+    <p class="ph"><span>${M}월까지 공급대가 <b class="num">${man(c.supply / 10000)}</b></span><span>연말 예상 <b class="num">${man(annual / 10000)}</b></span></p>
+    <p>${annual < EXEMPT ? `지금 추세라면 올해 공급대가가 4,800만원 미만이라 <b>납부의무가 면제될 가능성이 있어요.</b>` : `지금 추세라면 올해 공급대가가 <b>4,800만원을 넘을 것으로 보여</b> 부가세를 내셔야 해요.`}</p></div>
+    <h2>예상 부가세 계산</h2><table class="vt"><thead><tr><th>항목</th><th>금액</th></tr></thead><tbody>
+    ${row("공급대가 합계 (부가세 포함 매출)", c.supply, "grp")}${c.sRows.map(([n, v]) => row(esc(n), v)).join("")}
+    ${row(`납부세액 (A) = 공급대가 × ${Math.round(MT.vaRate * 100)}% × 10%`, c.base, "grp")}
+    ${row("매입 세금계산서등 수취세액공제 (B)", c.inCred, "grp")}<tr><td colspan="2" class="sub">과세 매입 공급대가 ${wonf(c.buyGross)} × 0.5%</td></tr>
+    ${row("신용카드매출전표등 발행세액공제 (C)", c.card, "grp")}<tr><td colspan="2" class="sub">카드·현금영수증 매출 ${wonf(c.cardBase)} × 1.3%</td></tr>
+    ${row("예정부과세액 (D)", MT.prepaid, "grp2")}<tr class="fin"><td>예상 납부세액<small>(A)−(B)−(C)−(D)</small></td><td class="num">${wonf(c.est)}</td></tr></tbody></table>
+    <p class="note">* 간이과세자: 업종 부가가치율(시행령 제111조), 매입 공제 0.5%(법 제63조), 카드 발행 공제 1.3%(법 제46조, 2026년까지·연 1천만원 한도), 공제 합계는 납부세액을 넘지 못해요(법 제63조 제6항). 공급대가 4,800만원 미만이면 납부의무 면제(법 제69조).</p>`;
+  } else {
+    body = `<h2>예상 부가세 계산</h2><table class="vt"><thead><tr><th>항목</th><th>세액</th></tr></thead><tbody>
+    ${row("매출세액 (A)", c.A, "grp")}${row("매입세액 (B) 세금계산서·카드·현금영수증 과세분", c.B, "grp")}
+    ${row("신용카드매출전표등 발행세액공제 (C)", c.card, "grp")}<tr><td colspan="2" class="sub">카드·현금영수증 매출 ${wonf(c.cardBase)} × 1.3%</td></tr>
+    ${row("예정고지세액 (D)", MT.prepaid, "grp2")}<tr class="fin"><td>예상 ${c.est >= 0 ? "납부" : "환급"}세액<small>(A)−(B)−(C)−(D)</small></td><td class="num">${wonf(Math.abs(c.est))}</td></tr></tbody></table>
+    <p class="note">* 일반과세자 기준. 의제매입세액공제·불공제 매입세액은 신고 때 반영되어 금액이 달라질 수 있어요.</p>`;
+  }
+  return head("예상 부가세 보고서", [...base, ["과세기간", `${Y}.${mm(p0)}.01 ~ ${Y}.${mm(end)}.${lastDay(Y, end)}`], ["분석기간", span(p0, M)]], `${mm(M)}월 예상 부가세 보고서를 보내드립니다.`) +
+  `<p class="eyebrow">${mm(p0)}월부터 ${mm(M)}월까지 · ${esc(MT.taxType)}</p><p class="big">장부 기준 예상 부가세는<br><b>${wonf(Math.abs(c.est))}</b>${c.est >= 0 ? "이에요" : " 환급이에요"}.</p>
+  ${prev ? `<p class="cmp">${chg(dd, wonf, "지난달 예상액보다")}</p>` : ""}${NOTE}${body}
+  <div class="two"><section><h2>분기별 예상 부가세</h2><p class="say">분기별로 따로 계산한 예상 부가세예요.</p><p class="note" style="margin-top:-10px">공제는 기간 전체로 계산하므로 분기 합계와 예상액은 달라요.</p>
+  ${legend([[COL.s,"납부"]])}<div class="fig" data-k="vq" style="min-height:220px"><svg id="c-vq" role="img" aria-label="분기별 예상 부가세"></svg></div></section>
+  <section><h2>다음 신고</h2><div class="next">${GANI ? "간이과세자는 1년에 한 번 신고해요. " : ""}다음 확정신고 기한은 <b>${due.getFullYear()}년 ${due.getMonth() + 1}월 25일(${DOW[due.getDay()]})</b>이에요. 영수증과 증빙을 미리 보내주시면 빠짐없이 반영할게요.</div></section></div>`; };
+
+// ---------- 부가세 신고분석 ----------
+V.vatfile = () => head("부가세 신고분석 보고서", [...base, ["업태", MT.upte], ["업종", MT.biz]], "부가세 신고분석 보고서를 보내드립니다.") +
+  `<p class="big">지난 부가세 신고 자료를<br><b>준비하고 있어요.</b></p>${notice("신고서·접수증·납부서가 등록되면 이 화면에서 신고 내역과 분석을 볼 수 있어요.")}`;
+
+// ---------- 거래처 매출장 / 매입장 ----------
+function book(side){
+  const n = side === "s" ? "매출" : "매입", q = Math.max(1, Math.floor(M / 3)), A_ = range((q - 1) * 3 + 1, q * 3), B_ = q > 1 ? range((q - 2) * 3 + 1, (q - 1) * 3) : [];
+  const tp = st[side + "bt"] ?? "all", fl = st[side + "bf"] ?? "all", all = RAW.T.filter(c => c.side === side);
+  const rows = all.filter(c => tp === "all" || c.t === tp).map(c => { const a = sum(A_.map(m => c.m[m - 1])), b = sum(B_.map(m => c.m[m - 1])); return {n: c.n, a, b, ac: sum(A_.map(m => c.c[m - 1])), bc: sum(B_.map(m => c.c[m - 1])), d: a - b}; })
+    .filter(r => (r.a || r.b) && (fl === "all" || (fl === "dn" ? r.d < 0 : r.d > 0))).sort((x, y) => y.a - x.a);
+  const ta = sum(all.map(c => sum(A_.map(m => c.m[m - 1])))), tb = sum(all.map(c => sum(B_.map(m => c.m[m - 1]))));
+  const T = {a: sum(rows.map(r => r.a)), b: sum(rows.map(r => r.b)), ac: sum(rows.map(r => r.ac)), bc: sum(rows.map(r => r.bc))};
+  const cell = (v, c) => `<td><span class="num">${won(v)}</span><small>${c}건</small></td>`;
+  return head(`거래처 ${n}장 보고서`, [...base, ["분석기간", span(A_[0], A_[2])]], `${n}장 보고서를 보내드립니다.`) +
+  `<p class="big">${mm(A_[0])}월부터 ${mm(A_[2])}월까지<br>${n} 기준 증빙된 전자(세금)계산서는<br><b>${wonf(ta)}</b>이에요.</p>${B_.length ? `<p class="cmp">${chg(ta - tb, wonf, "지난 분기보다")}</p>` : ""}
+  ${files([`${q}분기 ${n}장 엑셀 다운로드`, `월별 ${n}장 엑셀 다운로드`])}
+  <h2>거래처 목록</h2><p class="note" style="margin-top:-6px">* 전자(세금)계산서 공급가액 기준</p>
+  ${seg(side + "bt", [["all","전체"],["세금","전자세금계산서"],["계산","전자계산서"]], "all")}${seg(side + "bf", [["all","전체"],["dn","금액감소"],["up","금액증가"]], "all")}
+  ${rows.length ? `<div class="scroll"><table class="pt bk"><thead><tr><th class="rh">거래처명</th><th>${q}분기 (A)<small>${mm(A_[0])}~${mm(A_[2])}월</small></th><th>지난 분기 (B)</th><th>총 합계<small>(A)+(B)</small></th><th>전기대비 차액<small>(A)−(B)</small></th></tr></thead><tbody>
+  <tr class="tot"><th class="rh" scope="row">총 합계</th>${cell(T.a, T.ac)}${cell(T.b, T.bc)}${cell(T.a + T.b, T.ac + T.bc)}<td class="num${T.a - T.b < 0 ? " neg" : ""}">${won(T.a - T.b)}</td></tr>
+  ${rows.map(r => `<tr><th class="rh" scope="row">${esc(r.n)}</th>${cell(r.a, r.ac)}${cell(r.b, r.bc)}${cell(r.a + r.b, r.ac + r.bc)}<td class="num${r.d < 0 ? " neg" : ""}">${won(r.d)}</td></tr>`).join("")}</tbody></table></div>` : `<p class="empty">전자(세금)계산서로 거래한 ${n}처가 없어요.</p>`}`;
+}
+V.salesbook = () => book("s");
+V.buybook = () => book("b");
+
+// ---------- 영수증 ----------
+const BANKC = [["KB","KB","#7a6a55"],["국민","KB","#7a6a55"],["신한","신한","#0046ff"],["우리","우리","#0067ac"],["하나","하나","#00857c"],["농협","농협","#00a651"],["NH","농협","#00a651"],["기업","IBK","#0055a5"],["IBK","IBK","#0055a5"],["삼성","삼성","#034ea2"],["현대","현대","#222222"],["롯데","롯데","#e60012"],["비씨","BC","#f04e3e"],["BC","BC","#f04e3e"],["카카오","카카오","#3c1e1e"],["토스","토스","#0064ff"],["케이","케이","#1a1a6e"],["새마을","MG","#0072bc"],["우체국","우체국","#ee3124"],["수협","수협","#0091d5"],["부산","부산","#d6001c"],["대구","iM","#00a0e9"],["iM","iM","#00a0e9"],["광주","광주","#003b8e"],["경남","경남","#d6001c"],["SC","SC","#00a3e0"],["씨티","씨티","#003b70"]];
+let pend = [];
+const ACST = {"연결됨": ["", ""], "연결 필요": ["연결 필요", "need"], "연결 불가": ["연결 불가", "no"], "등록 요청": ["확인 중", "wait"], "올리는 중": ["보내는 중", "wait"], "실패": ["다시 시도", "fail"]};
+const acItem = a => { const hit = BANKC.find(([k]) => (a.bank + a.name).includes(k)), card = a.k === "카드", [t, c] = ACST[a.st] || ["", ""], dim = a.st === "연결 필요" || a.st === "연결 불가";
+  const title = a.name || a.bank || (card ? "새 카드" : "새 계좌"), sub = a.num ? `${esc(a.bank || "")} ${esc(a.num)}` : (a.d ? `${a.d} 사진 접수 · 담당자 확인 중` : "사진 접수 · 담당자 확인 중");
+  return `<div class="ac${dim ? " dim" : ""}"><span class="aci${card ? " card" : ""}" style="${hit ? `background:${hit[2]}` : ""}">${hit ? hit[1] : (card ? "카드" : "계좌")}</span><span><b>${esc(title)}</b><small>${sub}</small></span><span class="acs ${c}">${t}</span></div>`; };
+const acList = () => { const all = (RAW.acc || []).concat(pend), A = all.filter(a => a.k === "계좌"), Cd = all.filter(a => a.k === "카드");
+  const blk = (lbl, arr) => `<h3 class="h3">사업용 ${lbl} ${arr.length}개</h3><div class="acl">${arr.length ? arr.map(acItem).join("") : `<p class="empty">등록된 ${lbl}가 없어요.</p>`}</div>`;
+  return `<h2>등록현황</h2><p class="note" style="margin-top:-6px;text-align:right">* 개인/법인 사업자 계좌 및 카드 확인 가능</p>${blk("계좌", A)}<hr class="acgap">${blk("카드", Cd)}
+  <div class="addrow"><label class="add">＋ 카드 사진으로 등록<input type="file" data-up="card" accept="${"image/"}*"></label><label class="add">＋ 통장 사진으로 등록<input type="file" data-up="account" accept="${"image/"}*"></label></div>
+  <p class="note">새로 만든 사업용 카드 앞면이나 통장 첫 장을 찍어 보내 주세요. 담당자가 확인한 뒤 등록하고 여기에 표시해 드려요.</p>`; };
+async function prep(file){
+  try { const img = await createImageBitmap(file), s = Math.min(1, 1800 / Math.max(img.width, img.height)), c = document.createElement("canvas");
+    c.width = Math.round(img.width * s); c.height = Math.round(img.height * s); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height); return c.toDataURL("image/jpeg", 0.85); }
+  catch (_) { return await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = no; r.readAsDataURL(file); }); } }
+const send = (kind, file) => prep(file).then(d => api({action: "upload", k: RAW.k, kind: kind, name: file.name, data: d, t: SESS.t, e: SESS.e})).then(r => { if (!r || !r.ok) throw new Error((r && r.msg) || "fail"); return r; });
+let shots = [];
+V.receipt = () => { const C = cols(st.rcu ?? "m"), kk = st.rcK ?? "b", PP = RAW.paper[kk];
+  const types = ["간이영수증","종이세금계산서","종이계산서"], rows = types.map(t => ({n: t, v: C.map(c => PP[t] ? [sum(c.ms.map(m => PP[t].a[m - 1])), sum(c.ms.map(m => PP[t].n[m - 1]))] : [0, 0])}));
+  rows.push({n: `총${kk === "b" ? "매입" : "매출"}`, tot: 1, v: C.map((c, i) => [sum(rows.map(r => r.v[i][0])), sum(rows.map(r => r.v[i][1]))])});
+  const mon = side => sum(Object.values(RAW.paper[side]).map(p => p.a[M - 1]));
+  const useRows = Object.entries(RAW.A).map(([acct, o]) => ({n: esc(acct), v: C.map(c => [sum(c.ms.map(m => o.a[m - 1])), sum(c.ms.map(m => o.n[m - 1]))])})).filter(r => r.v.some(x => x[0])).sort((x, y) => y.v[0][0] - x.v[0][0]);
+  const nm = M + 1, ny = nm > 12 ? Y + 1 : Y, nmm = nm > 12 ? 1 : nm;
+  const sched = [[10, "원천세", `${M}월 지급분`, "원천징수 소득세 신고·납부 기한 (지급분이 있을 때)"]].concat(nmm === 11 ? [[30, "종합소득세", `${Y}년 중간예납`, "종합소득세 중간예납세액 납부 기한"]] : []).concat(nmm === 1 ? [[25, "부가가치세", `${Y}년 확정신고`, "부가가치세 확정신고·납부 기한"]] : []).concat(nmm === 7 && !GANI ? [[25, "부가가치세", `${Y}년 1기 확정신고`, "부가가치세 확정신고·납부 기한"]] : []);
+  return head("영수증 보고서", [...base, ["분석기간", span(M, M)]], "경조사비, 종이세금계산서, 간이영수증 같은 수기 증빙을 보내주세요. 빠짐없이 장부에 반영할게요.") +
+  `<p class="big">${mm(M)}월에 등록된 수기 영수증은<br>매출 기준 <b>${wonf(mon("s"))}</b><br>매입 기준 <b>${wonf(mon("b"))}</b>이에요.</p>
+  <div class="tip"><p><b>경조사비·간이영수증도 비용이 될 수 있어요.</b><br>청첩장·부고 문자, 간이영수증을 사진으로 보내주시면 담당자가 경비 처리 여부를 확인해 드려요.</p>
+  <label class="cta">영수증 등록하러 가기<input type="file" id="shot" accept="${"image/"}*" multiple></label><div class="thumbs">${shots.map(x => `<figure><img src="${x.u}" alt="올린 영수증"><figcaption>${x.s === "ok" ? "보냄" : x.s === "fail" ? "실패" : "보내는 중"}</figcaption></figure>`).join("")}</div>
+  ${shots.length ? `<p class="note">사진 ${shots.filter(x => x.s === "ok").length}장을 보냈어요. 담당자가 확인해서 장부에 반영할게요.</p>` : ""}</div>
+  ${acList()}
+  <h2>이달의 세무일정</h2><h3 class="h3" style="border-bottom:1px solid var(--ink);padding-bottom:8px">${mm(nmm)}월</h3>
+  ${sched.map(([d, t, s1, s2]) => `<div class="sch"><div class="day"><b>${mm(d)}</b><small>${DOW[new Date(ny, nmm - 1, d).getDay()]}요일</small></div><div><span class="st">${t}</span><b>${s1}</b><br>${s2}</div></div>`).join("")}
+  <p class="note">기한이 토요일·공휴일이면 다음 영업일까지예요.</p>
+  <h2>수기 증빙 집계</h2><p class="note" style="margin-top:-6px;text-align:right">* 거래일자 기준</p>
+  ${seg("rcK", [["b","매입"],["s","매출"]], "b")}${unitTabs("rcu")}${ptable(C.map(c => c.l), rows)}
+  <h2>용도별 현황</h2><p class="note" style="margin-top:-6px">* 전체 매입 증빙을 계정과목별로 보여드려요</p>${useRows.length ? ptable(C.map(c => c.l), useRows) : `<p class="empty">매입 내역이 없어요.</p>`}`; };
+
+// ---------- 그래프 ----------
+let charts = [];
+const box2 = svg => [svg.clientWidth, svg.clientHeight];
+const ticks = (W, x, H) => { let s = ""; for (let i = 0; i < 12; i++) if (W >= 420 || i % 2 === 0) s += `<text x="${x(i)}" y="${H - 8}" text-anchor="middle" font-size="12" fill="var(--soft)">${i + 1}월</text>`; return s; };
+function bar(key, arr, lyAvg){ let sel = arr.length - 1; const c = {key, pick(i){ sel = Math.min(i, arr.length - 1); c.draw(); }, draw(){
+  const svg = $("c-" + key); if (!svg) return; const [W, H] = box2(svg); if (!W || !H) return;
+  const top = Math.max(...arr, lyAvg || 0, 0.0001) * 1.12, bot = Math.min(0, ...arr) * 1.12, pl = 6, pr = 6, pt = 12, pb = 28, cw = (W - pl - pr) / 12, bw = Math.min(26, cw * .56);
+  const y = v => pt + (H - pt - pb) * (top - v) / (top - bot), x = i => pl + cw * i + cw / 2, avgA = sum(arr) / arr.length;
+  let s = `<rect x="${pl + cw * sel}" y="${pt}" width="${cw}" height="${H - pt - pb}" fill="var(--card)" rx="6"/><line x1="${pl}" x2="${W - pr}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)"/>`;
+  if (lyAvg) s += `<line x1="${pl}" x2="${W - pr}" y1="${y(lyAvg)}" y2="${y(lyAvg)}" stroke="var(--gray)" stroke-width="2.5" stroke-dasharray="5 5"/>`;
+  s += `<line x1="${pl}" x2="${W - pr}" y1="${y(avgA)}" y2="${y(avgA)}" stroke="var(--acc)" stroke-dasharray="5 5" opacity=".7"/>`;
+  arr.forEach((v, i) => { s += `<rect x="${x(i) - bw / 2}" y="${Math.min(y(v), y(0))}" width="${bw}" height="${Math.max(1, Math.abs(y(v) - y(0)))}" rx="5" fill="var(--acc)"/>`; });
+  svg.innerHTML = s + ticks(W, x, H);
+  const p = $("p-" + key); if (p) p.innerHTML = `<b>${sel + 1}월</b>${lyAvg ? `<span>작년 월평균 <span class="num">${sman(lyAvg)}</span></span>` : ""}<span>올해 <span class="num">${sman(arr[sel])}</span></span>`;
+}}; return c; }
+function cum(key, arr, lyAvg){ return {key, draw(){
+  const svg = $("c-" + key); if (!svg) return; const [W, H] = box2(svg); if (!W || !H) return;
+  const run = a => a.reduce((o, v) => (o.push((o.length ? o[o.length - 1] : 0) + v), o), []), ca = run(arr), n = arr.length, avg = ca[n - 1] / n, proj = [], cl = lyAvg ? Array.from({length: 12}, (_, i) => lyAvg * (i + 1)) : [];
+  for (let i = n - 1; i < 12; i++) proj.push([i, ca[n - 1] + avg * (i - n + 1)]);
+  const e = proj[proj.length - 1][1], top = Math.max(...cl, e, ...ca, 0.0001) * 1.1, bot = Math.min(0, ...ca, e), pl = 6, pr = 10, pt = 12, pb = 28, cw = (W - pl - pr) / 12;
+  const y = v => pt + (H - pt - pb) * (top - v) / (top - bot), x = i => pl + cw * i + cw / 2, r = W < 520 ? 3 : 4;
+  let s = `<line x1="${pl}" x2="${W - pr}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)"/>`;
+  if (cl.length) s += `<polyline fill="none" stroke="var(--gray)" stroke-width="2.5" points="${cl.map((v, i) => `${x(i)},${y(v)}`).join(" ")}"/>`;
+  s += `<polyline fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-dasharray="6 6" points="${proj.map(([i, v]) => `${x(i)},${y(v)}`).join(" ")}"/><polyline fill="none" stroke="var(--acc)" stroke-width="3" points="${ca.map((v, i) => `${x(i)},${y(v)}`).join(" ")}"/>` + ca.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="${r}" fill="var(--acc)"/>`).join("");
+  s += `<text x="${x(11)}" y="${Math.max(14, y(e) - 10)}" text-anchor="end" font-size="12" fill="var(--acc)" font-weight="700">예상 ${sman(e)}</text>`;
+  svg.innerHTML = s + ticks(W, x, H); }}; }
+function qbar(key, vals){ return {key, draw(){
+  const svg = $("c-" + key); if (!svg) return; const [W, H] = box2(svg); if (!W || !H) return;
+  const labels = ["1분기","2분기","3분기","4분기"], cw = (W - 12) / 4, top = Math.max(...vals.filter(v => v != null).map(Math.abs), 1) * 1.25, pt = 22, pb = 30, y = v => pt + (H - pt - pb) * (1 - Math.abs(v) / top), bw = Math.min(40, cw * .45);
+  let s = `<line x1="6" x2="${W - 6}" y1="${y(0)}" y2="${y(0)}" stroke="var(--line)"/>`;
+  vals.forEach((v, i) => { const cx = 6 + cw * i + cw / 2, col = v < 0 ? COL.b : COL.s; s += `<text x="${cx}" y="${H - 10}" text-anchor="middle" font-size="12" fill="var(--soft)">${labels[i]}</text>`;
+    if (v == null) return; s += `<rect x="${cx - bw / 2}" y="${y(v)}" width="${bw}" height="${y(0) - y(v)}" rx="5" fill="${col}"/><text x="${cx}" y="${y(v) - 6}" text-anchor="middle" font-size="12" font-weight="700" fill="${col}">${wonf(v)}</text>`; });
+  svg.innerHTML = s; }}; }
+const mount = {
+  biz: () => [bar("pm", P()), cum("cum", P())],
+  sales: () => [bar("m", D.sales, D.lySalesAvg), cum("cum", D.sales, D.lySalesAvg)],
+  buy: () => [bar("m", D.buy), cum("cum", D.buy)],
+  pay: () => [bar("pay", D.payM, D.lyPayAvg)],
+  vat: () => [qbar("vq", V.vat.q)]
+};
+const ACC = {biz: "var(--blue2)", sales: COL.s, buy: COL.b, pay: COL.p, vat: COL.s, vatfile: COL.s, salesbook: COL.s, buybook: COL.b, receipt: COL.s};
+const ro = new ResizeObserver(() => charts.forEach(c => c.draw()));
+let cur = "", route = (typeof location !== "undefined" && location.hash.slice(1)) || "home";
+function show(keep){
+  let r = route; if (!V[r]) r = "home";
+  const sy = window.scrollY;
+  document.documentElement.style.setProperty("--acc", ACC[r] || "var(--blue2)");
+  $("app").innerHTML = V[r]();
+  $("back").style.visibility = r === "home" ? "hidden" : "visible";
+  ro.disconnect(); charts = mount[r] ? mount[r]() : [];
+  charts.forEach(c => { ro.observe($("c-" + c.key)); c.draw(); });
+  if (keep && cur === r) window.scrollTo(0, sy); cur = r;
+}
+let tt;
+const toast = m => { const t = $("toast"); t.textContent = m; t.classList.add("on"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("on"), 2200); };
+$("app").addEventListener("click", e => {
+  const f = e.target.closest(".fig");
+  if (f) { const c = charts.find(c => c.key === f.dataset.k); if (c && c.pick) { const b = f.getBoundingClientRect(); c.pick(Math.max(0, Math.floor((e.clientX - b.left - 6) / ((b.width - 12) / 12)))); } return; }
+  const s = e.target.closest("[data-st]"); if (s) { const [k, v] = s.dataset.st.split(":"); st[k] = v || undefined; show(true); return; }
+  if (e.target.closest("[data-file]")) toast("첨부 파일 연결은 다음 단계에서 준비돼요");
+});
+$("app").addEventListener("change", async e => { const inp = e.target, kind = inp.id === "shot" ? "receipt" : inp.dataset && inp.dataset.up; if (!kind) return;
+  const files = [...inp.files].slice(0, 10); if (!files.length) return; let okN = 0, bad = 0;
+  for (const f of files) {
+    const it = kind === "receipt" ? {u: URL.createObjectURL(f), s: "up"} : {k: kind === "card" ? "카드" : "계좌", bank: "", name: "", num: "", st: "올리는 중", d: ""};
+    (kind === "receipt" ? shots : pend).push(it); show(true);
+    try { await send(kind, f); okN++; if (kind === "receipt") it.s = "ok"; else { it.st = "등록 요청"; const t = new Date(); it.d = (t.getMonth() + 1) + "." + t.getDate(); } }
+    catch (err) { bad++; if (kind === "receipt") it.s = "fail"; else it.st = "실패"; }
+    show(true); }
+  toast(bad ? "사진을 보내지 못했어요. 잠시 뒤 다시 해 주세요." : `사진 ${okN}장을 보냈어요. 담당자가 확인할게요.`); });
+let QP = {};
+const GS = typeof google !== "undefined" && google.script && google.script.history;
+function go(r){ route = r; if (GS) { try { google.script.history.push({r: r}, QP, r); } catch (_) {} } else { history.pushState({r: r}, "", "#" + r); } show(); window.scrollTo(0, 0); }
+document.addEventListener("click", e => { const a = e.target.closest('a[href^="#"]'); if (!a) return; e.preventDefault(); go(a.getAttribute("href").slice(1) || "home"); }, true);
+if (GS) {
+  google.script.history.setChangeHandler(e => { route = (e.state && e.state.r) || e.location.hash || "home"; show(); window.scrollTo(0, 0); });
+  google.script.url.getLocation(l => { QP = l.parameter || {}; if (l.hash && V[l.hash] && l.hash !== route) { route = l.hash; show(); } });
+} else {
+  window.addEventListener("popstate", () => { route = location.hash.slice(1) || "home"; show(); window.scrollTo(0, 0); });
+}
+show();
+}
+
 </script>
 </body>
 </html>

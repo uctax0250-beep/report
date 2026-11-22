@@ -14,15 +14,16 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon.png">
-<style>body{margin:0;font-family:system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;color:#5b6472;text-align:center}a{color:#0a5cff}</style>
+<style>html,body{margin:0;height:100%;background:#fff}iframe{position:fixed;inset:0;width:100%;height:100%;border:0}.ld{position:fixed;inset:0;display:grid;place-items:center;font-family:system-ui,sans-serif;color:#5b6472}</style>
 </head>
 <body>
-<p>보고서를 여는 중이에요…<br><a id="go" href="#">열리지 않으면 여기를 눌러 주세요</a></p>
+<div class="ld" id="ld">보고서를 여는 중이에요…</div>
+<iframe id="rp" title="유창세무회계 보고서" allow="clipboard-write"></iframe>
 <script>
 var APP = "https:" + "//script.google.com/macros/s/AKfycbxMKgTgxIBiiADxzGp-1HrBDD132EjyS7Wm__ihDRz2i_uwUnhrGaupFCTf0folbsSHoQ/exec";
-var url = APP + location.search + location.hash;
-document.getElementById("go").href = url;
-location.replace(url);
+var f = document.getElementById("rp");
+f.addEventListener("load", function () { document.getElementById("ld").style.display = "none"; });
+f.src = APP + location.search + location.hash;
 </script>
 </body>
 </html>

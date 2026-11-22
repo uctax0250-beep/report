@@ -26,9 +26,8 @@ var ld = document.getElementById("ld"), hide = function () { ld.className = "ld 
 window.addEventListener("message", function (e) { if (e.data === "uc-ready") hide(); });
 setTimeout(function () {
   if (ld.className.indexOf("hide") >= 0) return;
-  ld.innerHTML = '<div style="text-align:center;padding:0 24px;line-height:1.6"><img src="icon.png" alt="">화면이 열리지 않나요?<br><a id="direct" style="display:inline-block;margin-top:14px;padding:12px 22px;border-radius:12px;background:#1d6fc4;color:#fff;text-decoration:none;font-weight:700" target="_top">보고서 바로 열기</a><div style="font-size:13px;margin-top:12px">회사 PC 보안 설정 때문에 안 보일 수 있어요.</div></div>';
-  document.getElementById("direct").href = APP + location.search + location.hash;
-}, 9000);
+  location.replace(APP + location.search + location.hash);
+}, 7000);
 f.src = APP + location.search + location.hash;
 </script>
 </body>

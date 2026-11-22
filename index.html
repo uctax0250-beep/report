@@ -14,15 +14,17 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon.png">
-<style>html,body{margin:0;height:100%;background:#fff}iframe{position:fixed;inset:0;width:100%;height:100%;border:0}.ld{position:fixed;inset:0;display:grid;place-items:center;font-family:system-ui,sans-serif;color:#5b6472}</style>
+<style>html,body{margin:0;height:100%;background:#fff}iframe{position:fixed;inset:0;width:100%;height:100%;border:0}.ld{position:fixed;inset:0;z-index:2;display:grid;place-items:center;background:#fff;font-family:system-ui,sans-serif;color:#5b6472;font-size:15px;transition:opacity .25s}.ld img{width:56px;display:block;margin:0 auto 14px}.ld.hide{opacity:0;pointer-events:none}</style>
 </head>
 <body>
-<div class="ld" id="ld">보고서를 여는 중이에요…</div>
+<div class="ld" id="ld"><div><img src="icon.png" alt="">보고서를 여는 중이에요…</div></div>
 <iframe id="rp" title="유창세무회계 보고서" allow="clipboard-write"></iframe>
 <script>
 var APP = "https:" + "//script.google.com/macros/s/AKfycbxMKgTgxIBiiADxzGp-1HrBDD132EjyS7Wm__ihDRz2i_uwUnhrGaupFCTf0folbsSHoQ/exec";
 var f = document.getElementById("rp");
-f.addEventListener("load", function () { document.getElementById("ld").style.display = "none"; });
+var ld = document.getElementById("ld"), hide = function () { ld.className = "ld hide"; };
+window.addEventListener("message", function (e) { if (e.data === "uc-ready") hide(); });
+setTimeout(hide, 20000);
 f.src = APP + location.search + location.hash;
 </script>
 </body>
